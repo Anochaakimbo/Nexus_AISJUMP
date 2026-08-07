@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/*
+ * NEXUS design tokens.
+ * Source of truth for all colour/typography values — components must never
+ * hardcode a hex. Change a value here and it propagates everywhere.
+ */
+@theme {
+  /* Brand */
+  --color-navy: #0b1d37;
+  --color-navy-soft: #1c3358;
+  --color-primary: #00cb53;
+  --color-primary-dark: #00a844;
+  --color-primary-soft: #e6f9ee;
+  --color-accent: #1665ff;
+  --color-accent-soft: #e8f0ff;
+  --color-lime: #8bc34a;
+
+  /* Surfaces */
+  --color-surface: #f5f7fb;
+  --color-card: #ffffff;
+  --color-line: #e6eaf2;
+
+  /* Text */
+  --color-ink: #0b1d37;
+  --color-ink-muted: #5b6b85;
+  --color-ink-faint: #93a1b8;
+
+  /* Status — used by roadmap levels and match scores */
+  --color-warn: #f5a623;
+  --color-danger: #e5484d;
+
+  /* Typography — Prompt is the only family; it carries Thai + Latin */
+  --font-sans: var(--font-prompt), system-ui, sans-serif;
+
+  /* Radii from the mockup's card/button treatment */
+  --radius-card: 16px;
+  --radius-pill: 999px;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* The demo is designed mobile-first; keep long Thai strings from overflowing. */
+* {
+  overflow-wrap: break-word;
+}
