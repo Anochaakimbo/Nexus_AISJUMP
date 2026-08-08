@@ -25,44 +25,32 @@ export default function OnboardingPage() {
         </div>
 
         {/* Stands in for the illustration in the design spec. */}
-        <div className="relative my-10 aspect-4/3 overflow-hidden rounded-3xl bg-linear-to-br from-accent/40 via-navy-soft to-primary/30 ring-1 ring-white/10">
-          <div className="absolute inset-0 flex items-center justify-center p-6">
-            <Image
-              src="/nexus-logo.jpg"
-              alt="NEXUS AI Talent Ecosystem"
-              width={200}
-              height={200}
-              className="max-h-36 w-auto object-contain rounded-2xl shadow-lg"
-              priority
-            />
-          </div>
-          <div className="absolute inset-x-0 bottom-0 flex justify-center gap-2 pb-5">
-            {["learn", "roadmap", "career"].map((icon) => (
-              <span
-                key={icon}
-                className="flex size-10 items-center justify-center rounded-2xl bg-white/10 backdrop-blur"
-              >
-                <Icon name={icon} className="size-5 text-white" />
-              </span>
-            ))}
-          </div>
-        </div>
+        <div className="relative my-10 aspect-4/3 overflow-hidden rounded-3xl bg-white ring-1 ring-white/10">
+          <Image
+            src="/nexus-logo.jpg"
+            alt="NEXUS AI Talent Ecosystem"
+            fill
+            className="object-cover"
+            priority
+          />
 
-        <h1 className="text-center text-2xl font-semibold leading-snug">
-          {t("onboarding.title")}
-        </h1>
-        <p className="mt-2 text-center text-sm text-white/70">
-          {t("onboarding.subtitle")}
-        </p>
-
-        <div className="mt-8 space-y-3">
-          <ButtonLink href="/onboarding/assessment" fullWidth>
-            {t("onboarding.start")}
-          </ButtonLink>
-          <ButtonLink href="/dashboard" variant="inverse" fullWidth>
-            {t("onboarding.login")}
-          </ButtonLink>
         </div>
+      </div>
+
+      <h1 className="text-center text-2xl font-semibold leading-snug">
+        {t("onboarding.title")}
+      </h1>
+      <p className="mt-2 text-center text-sm text-white/70">
+        {t("onboarding.subtitle")}
+      </p>
+
+      <div className="mt-8 space-y-3">
+        <ButtonLink href="/onboarding/assessment" fullWidth>
+          {t("onboarding.start")}
+        </ButtonLink>
+        <ButtonLink href="/dashboard" variant="inverse" fullWidth>
+          {t("onboarding.login")}
+        </ButtonLink>
       </div>
     </div>
   );
