@@ -1,13 +1,17 @@
 import type { Opportunity } from "./types";
 
+/**
+ * Order matters: the dashboard features the first three, so the front of the
+ * list is kept varied by kind rather than stacking two hackathons together.
+ */
 export const opportunities: Opportunity[] = [
   {
-    id: "ai-hackathon-2025",
-    title: { th: "AI Hackathon 2025", en: "AI Hackathon 2025" },
+    id: "ais-hackathon-2026",
+    title: { th: "AIS Hackathon 2026", en: "AIS Hackathon 2026" },
     kind: "hackathon",
     location: { th: "กรุงเทพฯ", en: "Bangkok" },
-    deadline: { th: "20 พ.ค. 68", en: "20 May 2025" },
-    accent: "accent",
+    deadline: { th: "30 ก.ย. 69", en: "30 Sep 2026" },
+    accent: "primary",
   },
   {
     id: "scg-young-talent",
@@ -27,6 +31,14 @@ export const opportunities: Opportunity[] = [
     location: { th: "เชียงใหม่", en: "Chiang Mai" },
     deadline: { th: "15 พ.ค. 68", en: "15 May 2025" },
     accent: "lime",
+  },
+  {
+    id: "ai-hackathon-2025",
+    title: { th: "AI Hackathon 2025", en: "AI Hackathon 2025" },
+    kind: "hackathon",
+    location: { th: "กรุงเทพฯ", en: "Bangkok" },
+    deadline: { th: "20 พ.ค. 68", en: "20 May 2025" },
+    accent: "accent",
   },
   {
     id: "google-internship-2025",

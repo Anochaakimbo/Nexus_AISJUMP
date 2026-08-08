@@ -93,19 +93,11 @@ const script: Record<
   },
 };
 
-const stageLabels: Record<ChangeStage, Localized> = {
-  precontemplation: { th: "ขั้นเมินเฉย", en: "Precontemplation" },
-  contemplation: { th: "ขั้นตระหนักรู้", en: "Contemplation" },
-  preparation: { th: "ขั้นเตรียมพร้อม", en: "Preparation" },
-  action: { th: "ขั้นลงมือทำ", en: "Action" },
-  maintenance: { th: "ขั้นรักษาไว้", en: "Maintenance" },
-};
-
 export function getCoachMessage(learner: Profile): CoachMessage {
   const stage = getStage(learner.stage);
   return {
     stage: stage.id,
-    stageLabel: stageLabels[stage.id],
+    stageLabel: stage.name,
     ...script[stage.id],
   };
 }

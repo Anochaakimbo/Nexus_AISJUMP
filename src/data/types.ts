@@ -22,10 +22,13 @@ export type RoadmapStatus = "done" | "in-progress" | "locked";
 export type RoadmapLevel = {
   level: number;
   title: Localized;
-  /** 0–100 */
+  /** The skill this level trains. Progress mirrors that skill's level. */
+  skillId?: string;
+  /** 0–100 — derived, never authored. */
   progress: number;
   status: RoadmapStatus;
 };
+
 
 export type LearningKind = "course" | "video" | "article" | "podcast";
 
@@ -97,15 +100,30 @@ export type Task = {
   done: boolean;
 };
 
+/** Category hue token — see the tile tint map in the assessment page. */
+export type TintColor =
+  | "accent"
+  | "cyan"
+  | "primary"
+  | "amber"
+  | "rose"
+  | "violet";
+
 export type CareerGoal = {
   id: string;
   title: Localized;
   summary: Localized;
-  accent: string;
+  icon: string;
+  color: TintColor;
 };
 
 export type Profile = {
-  name: string;
+  /** Short name used in greetings. */
+  name: Localized;
+  fullName: Localized;
+  major: Localized;
+  /** Year of study. */
+  year: number;
   goal: Localized;
   /** 0–100 */
   readiness: number;
@@ -116,4 +134,5 @@ export type Interest = {
   id: string;
   label: Localized;
   icon: string;
+  color: TintColor;
 };

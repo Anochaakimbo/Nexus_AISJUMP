@@ -31,6 +31,11 @@ function Goal() {
     [params],
   );
 
+  // A career typed by hand has no track of its own yet — show it as the stated
+  // goal and frame the built-in tracks as the closest matches.
+  const raw = params.get("g") ?? "";
+  const ownGoal = raw.startsWith("custom:") ? raw.slice(7) : null;
+
   const [goalId, setGoalId] = useState(result.suggested[0]?.id ?? "");
 
   return (
@@ -55,8 +60,24 @@ function Goal() {
           ))}
         </Card>
 
+        {ownGoal && (
+          <Card className="mt-4 flex items-center gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber/10 text-amber">
+              <Icon name="flag" className="size-5" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-[11px] text-ink-faint">
+                {t("assessment.yourGoal")}
+              </p>
+              <p className="truncate text-sm font-semibold text-ink">
+                {ownGoal}
+              </p>
+            </div>
+          </Card>
+        )}
+
         <h2 className="mt-8 text-[15px] font-semibold text-ink">
-          {t("goal.title")}
+          {ownGoal ? t("assessment.closestPaths") : t("goal.title")}
         </h2>
         <p className="mt-1 text-xs text-ink-muted">{t("goal.subtitle")}</p>
 
