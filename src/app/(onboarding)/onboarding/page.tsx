@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { LocaleToggle } from "@/components/layout/LocaleToggle";
@@ -17,7 +18,6 @@ export default function OnboardingPage() {
       <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center">
         <div className="text-center">
           <div className="text-3xl font-bold tracking-tight">
-            NE<span className="text-primary">X</span>US
           </div>
           <div className="mt-1 text-[9px] font-medium tracking-[0.28em] text-white/60">
             AI TALENT ECOSYSTEM
@@ -26,8 +26,15 @@ export default function OnboardingPage() {
 
         {/* Stands in for the illustration in the design spec. */}
         <div className="relative my-10 aspect-4/3 overflow-hidden rounded-3xl bg-linear-to-br from-accent/40 via-navy-soft to-primary/30 ring-1 ring-white/10">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Icon name="sparkles" className="size-20 text-white/80" />
+          <div className="absolute inset-0 flex items-center justify-center p-6">
+            <Image
+              src="/nexus-logo.jpg"
+              alt="NEXUS AI Talent Ecosystem"
+              width={200}
+              height={200}
+              className="max-h-36 w-auto object-contain rounded-2xl shadow-lg"
+              priority
+            />
           </div>
           <div className="absolute inset-x-0 bottom-0 flex justify-center gap-2 pb-5">
             {["learn", "roadmap", "career"].map((icon) => (
