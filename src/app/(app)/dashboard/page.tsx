@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CoachCard } from "@/features/coach/CoachCard";
 import { OpportunityCard } from "@/features/opportunities/OpportunityCard";
 import { LocaleToggle } from "@/components/layout/LocaleToggle";
+import { Avatar } from "@/components/ui/Avatar";
 import { Card } from "@/components/ui/Card";
 import { Icon } from "@/components/ui/Icon";
 import { ProgressRing } from "@/components/ui/Progress";
@@ -13,13 +14,11 @@ import { opportunities } from "@/data/opportunities";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 /**
- * Destinations that are not in the bottom tab bar. Two tiles, no overlap with
- * the nav — this replaces the earlier journey strip, which repeated every
- * destination a third time.
+ * The one destination that is neither in the tab bar nor reachable from the
+ * search above. Career Matching used to sit here and now leads the page.
  */
 const quickLinks = [
   { href: "/mentors", icon: "mentor", labelKey: "nav.mentor" },
-  { href: "/careers", icon: "career", labelKey: "nav.career" },
 ] as const;
 
 export default function DashboardPage() {
@@ -27,10 +26,19 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 px-4 py-4">
-      <header className="flex items-center justify-between gap-3">
-        <h1 className="min-w-0 truncate text-lg font-semibold text-ink">
-          {t("dashboard.greeting")}, {profile.name}
-        </h1>
+      <header className="flex items-center gap-3">
+        <Avatar name={l(profile.name)} size={44} />
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] text-ink-faint">
+            {t("dashboard.greeting")}
+          </p>
+          <h1 className="truncate text-base font-semibold text-ink">
+            {l(profile.fullName)}
+          </h1>
+          <p className="truncate text-[11px] text-ink-muted">
+            {l(profile.major)} · {t("dashboard.year")} {profile.year}
+          </p>
+        </div>
         <div className="flex shrink-0 items-center gap-2">
           <LocaleToggle />
           <button
@@ -42,6 +50,16 @@ export default function DashboardPage() {
           </button>
         </div>
       </header>
+
+      {/* Looks like a search field but is a link: typing happens on the search
+          page, which has room for filters and a full result list. */}
+      <Link
+        href="/careers"
+        className="flex h-12 items-center gap-2 rounded-pill bg-card px-4 text-sm text-ink-faint ring-1 ring-line transition-colors hover:bg-surface"
+      >
+        <Icon name="search" className="size-4 shrink-0 text-primary" />
+        {t("career.searchPlaceholder")}
+      </Link>
 
       <div className="grid gap-3 sm:grid-cols-2">
         {/* A stat, not a link — Career Matching already has its own tile below,
@@ -58,6 +76,19 @@ export default function DashboardPage() {
 
         <CoachCard />
       </div>
+
+      <nav aria-label={t("nav.more")} className="grid gap-3">
+        {quickLinks.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className="flex items-center gap-2.5 rounded-2xl bg-card p-3.5 text-[13px] font-medium text-ink ring-1 ring-line transition-colors hover:bg-primary-soft"
+          >
+            <Icon name={link.icon} className="size-5 text-primary" />
+            {t(link.labelKey)}
+          </Link>
+        ))}
+      </nav>
 
       <section className="space-y-2.5">
         {/* No "see all" — every task is already listed, and the coach card
@@ -91,19 +122,6 @@ export default function DashboardPage() {
           ))}
         </div>
       </section>
-
-      <nav aria-label={t("nav.profile")} className="grid grid-cols-2 gap-3">
-        {quickLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="flex items-center gap-2.5 rounded-2xl bg-card p-3.5 text-[13px] font-medium text-ink ring-1 ring-line transition-colors hover:bg-primary-soft"
-          >
-            <Icon name={link.icon} className="size-5 text-primary" />
-            {t(link.labelKey)}
-          </Link>
-        ))}
-      </nav>
     </div>
   );
 }

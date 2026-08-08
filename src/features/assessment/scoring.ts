@@ -36,10 +36,10 @@ const interestWeights: Record<string, Partial<Record<string, number>>> = {
 };
 
 const strengthWeights: Record<string, Partial<Record<string, number>>> = {
-  analytical: { analyse: 26, build: 10, organise: 8 },
-  creative: { create: 26, present: 12, build: 8 },
-  people: { connect: 26, present: 16, organise: 6 },
-  execution: { build: 22, organise: 20, analyse: 8 },
+  analytical: { analyse: 26, detail: 20, solve: 18, learn: 12, build: 10, organise: 8 },
+  creative: { create: 26, write: 20, present: 12, build: 8, language: 8, learn: 8 },
+  people: { connect: 26, lead: 22, language: 18, present: 16, write: 12, organise: 6 },
+  execution: { build: 22, organise: 20, solve: 16, lead: 14, detail: 12, learn: 12, analyse: 8 },
 };
 
 const traitLabels: Record<string, Localized> = {

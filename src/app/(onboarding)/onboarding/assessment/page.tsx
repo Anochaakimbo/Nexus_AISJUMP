@@ -13,7 +13,18 @@ import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 const MIN_INTERESTS = 3;
 const MIN_STRENGTHS = 1;
-const STEPS = 3;
+// Four steps; the last one is optional and never blocks the finish button.
+const STEPS = 4;
+
+// Written out in full so Tailwind can see every class.
+const tints: Record<Interest["color"], string> = {
+  accent: "bg-accent/10 text-accent",
+  cyan: "bg-cyan/10 text-cyan",
+  primary: "bg-primary/10 text-primary-dark",
+  amber: "bg-amber/10 text-amber",
+  rose: "bg-rose/10 text-rose",
+  violet: "bg-violet/10 text-violet",
+};
 
 /** Square icon tiles shared by the two multi-select steps. */
 function ChoiceGrid({
@@ -43,15 +54,72 @@ function ChoiceGrid({
                 : "bg-card text-ink-muted ring-1 ring-line hover:bg-surface",
             )}
           >
-            <Icon
-              name={option.icon}
-              className={cn("size-6", active ? "text-primary" : "text-ink-faint")}
-            />
+            <span
+              className={cn(
+                "flex size-10 items-center justify-center rounded-xl transition-colors",
+                active ? "bg-primary text-white" : tints[option.color],
+              )}
+            >
+              <Icon name={option.icon} className="size-5" />
+            </span>
             <span className="leading-tight">{l(option.label)}</span>
           </button>
         );
       })}
     </div>
+  );
+}
+
+/** Square career tile. Same block language as the two grids above it. */
+function GoalTile({
+  active,
+  icon,
+  tint,
+  title,
+  summary,
+  onSelect,
+}: {
+  active: boolean;
+  icon: string;
+  tint: string;
+  title: string;
+  summary?: string;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      aria-pressed={active}
+      className={cn(
+        "flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-2xl p-3 text-center transition-colors",
+        active
+          ? "bg-primary-soft ring-2 ring-primary"
+          : "bg-card ring-1 ring-line hover:bg-surface",
+      )}
+    >
+      <span
+        className={cn(
+          "flex size-10 items-center justify-center rounded-xl transition-colors",
+          active ? "bg-primary text-white" : tint,
+        )}
+      >
+        <Icon name={icon} className="size-5" />
+      </span>
+      <span
+        className={cn(
+          "text-[13px] font-semibold leading-tight",
+          active ? "text-primary-dark" : "text-ink",
+        )}
+      >
+        {title}
+      </span>
+      {summary && (
+        <span className="text-[11px] leading-tight text-ink-muted">
+          {summary}
+        </span>
+      )}
+    </button>
   );
 }
 
@@ -62,9 +130,37 @@ export default function AssessmentPage() {
   const [step, setStep] = useState(0);
   const [pickedInterests, setPickedInterests] = useState<string[]>([]);
   const [pickedStrengths, setPickedStrengths] = useState<string[]>([]);
+  // Free-text strengths the grid doesn't cover.
+  const [ownStrengths, setOwnStrengths] = useState<string[]>([]);
+  const [draft, setDraft] = useState("");
   // null means "let AI decide" — a deliberate answer, not an empty one.
   const [goalId, setGoalId] = useState<string | null>(null);
   const [goalAnswered, setGoalAnswered] = useState(false);
+  const [ownGoals, setOwnGoals] = useState<string[]>([]);
+  const [goalDraft, setGoalDraft] = useState("");
+  // Filename only — the prototype has nowhere to upload to.
+  const [attachment, setAttachment] = useState<string | null>(null);
+
+  const pickGoal = (id: string | null) => {
+    setGoalId(id);
+    setGoalAnswered(true);
+  };
+
+  const addOwnGoal = () => {
+    const value = goalDraft.trim();
+    if (!value || ownGoals.includes(value)) return;
+    setOwnGoals((current) => [...current, value]);
+    setGoalDraft("");
+    pickGoal(`custom:${value}`);
+  };
+
+  const removeOwnGoal = (goal: string) => {
+    setOwnGoals((current) => current.filter((value) => value !== goal));
+    if (goalId === `custom:${goal}`) {
+      setGoalId(null);
+      setGoalAnswered(false);
+    }
+  };
 
   const toggle =
     (setter: React.Dispatch<React.SetStateAction<string[]>>) => (id: string) =>
@@ -74,13 +170,25 @@ export default function AssessmentPage() {
           : [...current, id],
       );
 
+  const addOwn = () => {
+    const value = draft.trim();
+    if (!value || ownStrengths.includes(value)) return;
+    setOwnStrengths((current) => [...current, value]);
+    setDraft("");
+  };
+
+  const strengthCount = pickedStrengths.length + ownStrengths.length;
+
+  // Attachment leads; it is optional, so it never blocks the next button.
   const canContinue = [
+    true,
     pickedInterests.length >= MIN_INTERESTS,
-    pickedStrengths.length >= MIN_STRENGTHS,
+    strengthCount >= MIN_STRENGTHS,
     goalAnswered,
   ][step];
 
   const heading = [
+    t("assessment.attachLabel"),
     t("assessment.pickInterests"),
     t("assessment.pickStrengths"),
     t("assessment.pickGoal"),
@@ -98,7 +206,9 @@ export default function AssessmentPage() {
       i: pickedInterests.join(","),
       s: pickedStrengths.join(","),
     });
+    if (ownStrengths.length) query.set("o", ownStrengths.join("|"));
     if (goalId) query.set("g", goalId);
+    if (attachment) query.set("f", attachment);
     router.push(`/onboarding/analyzing?${query}`);
   };
 
@@ -124,7 +234,7 @@ export default function AssessmentPage() {
         <h2 className="mt-6 text-[15px] font-semibold text-ink">{heading}</h2>
 
         <div className="mt-4">
-          {step === 0 && (
+          {step === 1 && (
             <ChoiceGrid
               options={interests}
               picked={pickedInterests}
@@ -132,73 +242,200 @@ export default function AssessmentPage() {
             />
           )}
 
-          {step === 1 && (
-            <ChoiceGrid
-              options={strengths}
-              picked={pickedStrengths}
-              onToggle={toggle(setPickedStrengths)}
-            />
+          {step === 2 && (
+            <>
+              <ChoiceGrid
+                options={strengths}
+                picked={pickedStrengths}
+                onToggle={toggle(setPickedStrengths)}
+              />
+
+              <div className="mt-5">
+                <h3 className="text-[13px] font-semibold text-ink">
+                  {t("assessment.otherLabel")}
+                </h3>
+
+                <div className="mt-2 flex gap-2">
+                  <input
+                    value={draft}
+                    onChange={(event) => setDraft(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        addOwn();
+                      }
+                    }}
+                    placeholder={t("assessment.otherPlaceholder")}
+                    aria-label={t("assessment.otherLabel")}
+                    className="h-11 min-w-0 flex-1 rounded-pill bg-card px-4 text-sm text-ink ring-1 ring-line outline-none placeholder:text-ink-faint focus:ring-2 focus:ring-primary"
+                  />
+                  <Button
+                    variant="secondary"
+                    className="h-11 shrink-0 px-5 text-sm"
+                    disabled={!draft.trim()}
+                    onClick={addOwn}
+                  >
+                    {t("assessment.add")}
+                  </Button>
+                </div>
+
+                {ownStrengths.length > 0 && (
+                  <ul className="mt-3 flex flex-wrap gap-2">
+                    {ownStrengths.map((item) => (
+                      <li key={item}>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOwnStrengths((current) =>
+                              current.filter((value) => value !== item),
+                            )
+                          }
+                          aria-label={`${t("assessment.removeItem")}: ${item}`}
+                          className="inline-flex items-center gap-1.5 rounded-pill bg-primary-soft px-3 py-1.5 text-xs font-medium text-primary-dark"
+                        >
+                          {item}
+                          <Icon name="close" className="size-3" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </>
           )}
 
-          {step === 2 && (
-            <div className="space-y-3">
-              {careerGoals.map((goal) => {
-                const active = goalAnswered && goalId === goal.id;
-                return (
-                  <button
-                    key={goal.id}
-                    type="button"
-                    onClick={() => {
-                      setGoalId(goal.id);
-                      setGoalAnswered(true);
-                    }}
-                    aria-pressed={active}
-                    className={cn(
-                      "flex w-full items-start gap-3 rounded-2xl bg-card p-4 text-left transition-colors",
-                      active
-                        ? "ring-2 ring-primary"
-                        : "ring-1 ring-line hover:bg-surface",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full",
-                        active ? "bg-primary" : "bg-line",
-                      )}
-                    >
-                      {active && (
-                        <Icon name="check" className="size-3 text-white" />
-                      )}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-sm font-semibold text-ink">
-                        {l(goal.title)}
-                      </span>
-                      <span className="mt-0.5 block text-xs leading-relaxed text-ink-muted">
-                        {l(goal.summary)}
-                      </span>
-                    </span>
-                  </button>
-                );
-              })}
+          {step === 3 && (
+            <>
+              {/* Two columns, not three: a career needs a line of explanation,
+                  which does not fit a third-width square. */}
+              <div className="grid grid-cols-2 gap-3">
+                {careerGoals.map((goal) => {
+                  const active = goalAnswered && goalId === goal.id;
+                  return (
+                    <GoalTile
+                      key={goal.id}
+                      active={active}
+                      icon={goal.icon}
+                      tint={tints[goal.color]}
+                      title={l(goal.title)}
+                      summary={l(goal.summary)}
+                      onSelect={() => pickGoal(goal.id)}
+                    />
+                  );
+                })}
 
-              <button
-                type="button"
-                onClick={() => {
-                  setGoalId(null);
-                  setGoalAnswered(true);
-                }}
-                aria-pressed={goalAnswered && goalId === null}
-                className={cn(
-                  "flex w-full items-center gap-3 rounded-2xl bg-card p-4 text-left text-sm font-medium transition-colors",
-                  goalAnswered && goalId === null
-                    ? "text-primary-dark ring-2 ring-primary"
-                    : "text-ink-muted ring-1 ring-line hover:bg-surface",
-                )}
-              >
-                <Icon name="sparkles" className="size-5 shrink-0 text-primary" />
-                {t("assessment.unsure")}
-              </button>
+                {ownGoals.map((goal) => (
+                  <div key={goal} className="relative">
+                    <GoalTile
+                      active={goalAnswered && goalId === `custom:${goal}`}
+                      icon="flag"
+                      tint={tints.amber}
+                      title={goal}
+                      summary={t("assessment.yourGoal")}
+                      onSelect={() => pickGoal(`custom:${goal}`)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeOwnGoal(goal)}
+                      aria-label={`${t("assessment.removeItem")}: ${goal}`}
+                      className="absolute right-2 top-2 flex size-6 items-center justify-center rounded-full bg-surface text-ink-faint"
+                    >
+                      <Icon name="close" className="size-3" />
+                    </button>
+                  </div>
+                ))}
+
+                <GoalTile
+                  active={goalAnswered && goalId === null}
+                  icon="sparkles"
+                  tint={tints.primary}
+                  title={t("assessment.unsure")}
+                  onSelect={() => pickGoal(null)}
+                />
+              </div>
+
+              <div className="mt-5">
+                <h3 className="text-[13px] font-semibold text-ink">
+                  {t("assessment.otherGoal")}
+                </h3>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    value={goalDraft}
+                    onChange={(event) => setGoalDraft(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        addOwnGoal();
+                      }
+                    }}
+                    placeholder={t("assessment.otherGoalPlaceholder")}
+                    aria-label={t("assessment.otherGoal")}
+                    className="h-11 min-w-0 flex-1 rounded-pill bg-card px-4 text-sm text-ink ring-1 ring-line outline-none placeholder:text-ink-faint focus:ring-2 focus:ring-primary"
+                  />
+                  <Button
+                    variant="secondary"
+                    className="h-11 shrink-0 px-5 text-sm"
+                    disabled={!goalDraft.trim()}
+                    onClick={addOwnGoal}
+                  >
+                    {t("assessment.add")}
+                  </Button>
+                </div>
+              </div>
+
+            </>
+          )}
+
+          {step === 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="shrink-0 rounded-pill bg-surface px-2.5 py-1 text-[11px] font-medium text-ink-faint">
+                  {t("assessment.optional")}
+                </span>
+                <p className="text-xs text-ink-muted">
+                  {t("assessment.attachWhy")}
+                </p>
+              </div>
+
+              {attachment ? (
+                <div className="flex items-center gap-3 rounded-2xl bg-primary-soft p-4">
+                  <Icon
+                    name="passport"
+                    className="size-6 shrink-0 text-primary-dark"
+                  />
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium text-primary-dark">
+                    {attachment}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setAttachment(null)}
+                    aria-label={t("assessment.removeItem")}
+                    className="shrink-0 text-primary-dark"
+                  >
+                    <Icon name="close" className="size-4" />
+                  </button>
+                </div>
+              ) : (
+                <label className="flex min-h-48 cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-line bg-card p-6 text-center transition-colors hover:bg-surface">
+                  <span className="flex size-12 items-center justify-center rounded-2xl bg-accent/10 text-accent">
+                    <Icon name="share" className="size-6" />
+                  </span>
+                  <span className="text-sm font-medium text-ink">
+                    {t("assessment.attachButton")}
+                  </span>
+                  <span className="text-[11px] text-ink-faint">
+                    {t("assessment.attachHint")}
+                  </span>
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx,image/*"
+                    className="sr-only"
+                    onChange={(event) =>
+                      setAttachment(event.target.files?.[0]?.name ?? null)
+                    }
+                  />
+                </label>
+              )}
             </div>
           )}
         </div>
@@ -208,7 +445,7 @@ export default function AssessmentPage() {
             {t("common.back")}
           </Button>
           <Button className="flex-1" disabled={!canContinue} onClick={goNext}>
-            {t("common.next")}
+            {step === STEPS - 1 ? t("assessment.finish") : t("common.next")}
           </Button>
         </div>
       </div>

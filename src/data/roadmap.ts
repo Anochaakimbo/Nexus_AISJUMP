@@ -1,77 +1,74 @@
-import type { CareerGoal, RoadmapLevel } from "./types";
+import { skills } from "./profile";
+import type { CareerGoal, Localized, RoadmapLevel } from "./types";
 
-/** The Data Scientist track from the design — seven levels, foundations first. */
-export const roadmap: RoadmapLevel[] = [
-  {
-    level: 1,
-    title: { th: "Python พื้นฐาน", en: "Python foundations" },
-    progress: 70,
-    status: "in-progress",
-  },
-  {
-    level: 2,
-    title: { th: "สถิติและความน่าจะเป็น", en: "Statistics & Probability" },
-    progress: 55,
-    status: "in-progress",
-  },
-  {
-    level: 3,
-    title: { th: "SQL สำหรับวิเคราะห์ข้อมูล", en: "SQL for Data Analysis" },
-    progress: 40,
-    status: "in-progress",
-  },
-  {
-    level: 4,
-    title: { th: "Machine Learning", en: "Machine Learning" },
-    progress: 30,
-    status: "in-progress",
-  },
-  {
-    level: 5,
-    title: { th: "Data Visualization", en: "Data Visualization" },
-    progress: 20,
-    status: "in-progress",
-  },
-  {
-    level: 6,
-    title: { th: "โปรเจกต์ & Portfolio", en: "Project & Portfolio" },
-    progress: 0,
-    status: "locked",
-  },
-  {
-    level: 7,
-    title: { th: "ฝึกงาน / เตรียมสมัครงาน", en: "Internship / Job Prep" },
-    progress: 0,
-    status: "locked",
-  },
+/**
+ * The Data Scientist track — seven levels, foundations first. Grouping comes
+ * from the growth stage that owns each level (see features/coach/stages.ts).
+ */
+const track: Array<{ title: Localized; skillId?: string }> = [
+  { title: { th: "Python พื้นฐาน", en: "Python foundations" }, skillId: "python" },
+  { title: { th: "สถิติและความน่าจะเป็น", en: "Statistics & Probability" }, skillId: "statistics" },
+  { title: { th: "SQL สำหรับวิเคราะห์ข้อมูล", en: "SQL for Data Analysis" }, skillId: "sql" },
+  { title: { th: "Machine Learning", en: "Machine Learning" }, skillId: "ml" },
+  { title: { th: "Data Visualization", en: "Data Visualization" }, skillId: "viz" },
+  { title: { th: "โปรเจกต์ & Portfolio", en: "Project & Portfolio" } },
+  { title: { th: "ฝึกงาน / เตรียมสมัครงาน", en: "Internship / Job Prep" } },
 ];
 
+/** A level is passed at 100% — that is what advances you to the next one. */
+const PASS_MARK = 100;
+
+/**
+ * Progress is read from the skill each level trains, so a level and its skill
+ * can never disagree. Levels without a skill (portfolio, internship) start at 0.
+ */
+export const roadmap: RoadmapLevel[] = track.map((step, index) => {
+  const progress =
+    skills.find((skill) => skill.id === step.skillId)?.level ?? 0;
+  return {
+    level: index + 1,
+    title: step.title,
+    skillId: step.skillId,
+    progress,
+    status:
+      progress >= PASS_MARK
+        ? "done"
+        : progress === 0
+          ? "locked"
+          : "in-progress",
+  };
+});
+
+/** Summaries stay short — they render inside a square tile, not a wide row. */
 export const careerGoals: CareerGoal[] = [
   {
     id: "data-scientist",
     title: { th: "Data Scientist", en: "Data Scientist" },
     summary: {
-      th: "วิเคราะห์ข้อมูลและสร้างโมเดลเพื่อช่วยธุรกิจตัดสินใจ",
-      en: "Analyse data and build models that drive business decisions",
+      th: "วิเคราะห์ข้อมูล สร้างโมเดลช่วยตัดสินใจ",
+      en: "Analyse data, build decision models",
     },
-    accent: "accent",
+    icon: "chart",
+    color: "accent",
   },
   {
     id: "data-analyst",
     title: { th: "Data Analyst", en: "Data Analyst" },
     summary: {
-      th: "เปลี่ยนข้อมูลดิบให้เป็นรายงานและ insight ที่ใช้งานได้จริง",
-      en: "Turn raw data into reports and insights teams can act on",
+      th: "เปลี่ยนข้อมูลเป็นรายงานที่ใช้ได้จริง",
+      en: "Turn data into reports teams use",
     },
-    accent: "primary",
+    icon: "search",
+    color: "cyan",
   },
   {
     id: "ml-engineer",
     title: { th: "ML Engineer", en: "ML Engineer" },
     summary: {
-      th: "นำโมเดล Machine Learning ขึ้นใช้งานจริงในระดับ production",
-      en: "Ship machine learning models into production systems",
+      th: "นำโมเดล ML ขึ้นใช้งานจริง",
+      en: "Ship ML models to production",
     },
-    accent: "lime",
+    icon: "chip",
+    color: "violet",
   },
 ];

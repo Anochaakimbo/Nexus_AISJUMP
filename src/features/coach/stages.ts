@@ -9,80 +9,112 @@ import type { ChangeStage, Localized } from "@/data/types";
  *
  * `lever` names the Self-Determination Theory need the stage leans on
  * (autonomy / competence / relatedness), which is what the copy is built to feed.
+ *
+ * Only `name` and `order` are rendered. `quote`, `description`, and `lever` are
+ * kept deliberately: they are the model itself, and they become the prompt
+ * material for the coach once a real LLM replaces the scripted copy.
  */
 export type StageDefinition = {
   id: ChangeStage;
   order: number;
+  name: Localized;
   quote: Localized;
   description: Localized;
   lever: "autonomy" | "competence" | "relatedness";
+  /**
+   * What the learner does while in this stage. Stages that map onto roadmap
+   * levels carry `levels` instead — the level list is the milestone list there,
+   * so the two never state the same thing twice.
+   */
+  milestones?: Array<{ label: Localized; done: boolean }>;
+  /** Roadmap level numbers that belong to this stage. */
+  levels?: number[];
 };
 
 export const stages: StageDefinition[] = [
   {
     id: "precontemplation",
     order: 1,
+    name: { th: "ยังไม่มีเป้าหมาย", en: "No goal yet" },
     quote: {
-      th: "“ไม่เห็นมีอะไรต้องเปลี่ยนนี่”",
-      en: "“Nothing needs to change.”",
+      th: "“ยังไม่คิดเรื่องอาชีพเลย”",
+      en: "“I haven't thought about a career.”",
     },
     description: {
-      th: "ยังไม่ยอมรับว่ามีปัญหา หรือคิดว่าทุกอย่างโอเคดีอยู่แล้ว",
-      en: "Not yet seeing a problem, or assuming everything is already fine.",
+      th: "ยังไม่ได้คิดว่าอยากทำอาชีพอะไร หรือคิดว่ายังไม่ต้องรีบ",
+      en: "No career in mind yet, or feels there is no rush.",
     },
     lever: "autonomy",
+    milestones: [
+      { label: { th: "ทำแบบประเมินศักยภาพ", en: "Take the assessment" }, done: true },
+      { label: { th: "ดูทักษะที่ตลาดแรงงานต้องการ", en: "See what the market wants" }, done: true },
+    ],
   },
   {
     id: "contemplation",
     order: 2,
+    name: { th: "เริ่มมองหาเส้นทาง", en: "Exploring paths" },
     quote: {
-      th: "“จริง ๆ แล้วมันก็มีปัญหาอยู่นะ แต่...”",
-      en: "“There is an issue, but…”",
+      th: "“ก็อยากเก่งขึ้นนะ แต่...”",
+      en: "“I want to get better, but…”",
     },
     description: {
-      th: "เริ่มเห็นว่ามีบางอย่างที่ควรปรับปรุง แต่ยังลังเลว่าจะเปลี่ยนดีไหม",
-      en: "Starting to see what could improve, but still hesitating.",
+      th: "เริ่มรู้ว่าต้องพัฒนาทักษะ แต่ยังไม่แน่ใจว่าจะเริ่มตรงไหน",
+      en: "Knows skills need work, but unsure where to start.",
     },
     lever: "autonomy",
+    milestones: [
+      { label: { th: "ดู Skill DNA ของตัวเอง", en: "Review your Skill DNA" }, done: true },
+      { label: { th: "เทียบ 3 เส้นทางอาชีพ", en: "Compare three career paths" }, done: true },
+    ],
   },
   {
     id: "preparation",
     order: 3,
+    name: { th: "วางแผนแล้ว", en: "Plan ready" },
     quote: {
-      th: "“เอาล่ะ! ต้องทำอะไรบ้างนะ?”",
-      en: "“Right — what do I actually do?”",
+      th: "“เอาล่ะ! ต้องเรียนอะไรบ้าง?”",
+      en: "“Right — what do I learn first?”",
     },
     description: {
-      th: "เริ่มวางแผนชัดเจน และพร้อมที่จะลงมือทำ",
-      en: "Making a concrete plan and getting ready to act.",
+      th: "รู้เป้าหมายแล้ว กำลังวางแผนว่าจะพัฒนาทักษะไหนก่อน",
+      en: "Goal is set; planning which skill to build first.",
     },
     lever: "competence",
+    milestones: [
+      { label: { th: "เลือกเป้าหมาย Data Scientist", en: "Pick the Data Scientist goal" }, done: true },
+      { label: { th: "สร้าง Roadmap 7 ระดับ", en: "Build the 7-level roadmap" }, done: true },
+    ],
   },
   {
     id: "action",
     order: 4,
+    name: { th: "กำลังพัฒนาทักษะ", en: "Building skills" },
     quote: {
       th: "“ลุยกันเลย!”",
       en: "“Let's go!”",
     },
     description: {
-      th: "ลงมือทำจริง ๆ และควรหาวิธีให้กำลังใจตัวเองเมื่อทำได้ตามเป้า",
-      en: "Actually doing the work — and needs recognition when targets land.",
+      th: "กำลังเรียนและทำโปรเจกต์จริง ควรได้กำลังใจเมื่อทำได้ตามเป้า",
+      en: "Learning and building for real — needs recognition when targets land.",
     },
     lever: "competence",
+    levels: [1, 2, 3, 4, 5],
   },
   {
     id: "maintenance",
     order: 5,
+    name: { th: "ทำต่อเนื่องได้", en: "Staying on track" },
     quote: {
       th: "“ทำจนเป็นนิสัยแล้ว!”",
       en: "“It's a habit now.”",
     },
     description: {
-      th: "ทำต่อเนื่องจนกลายเป็นส่วนหนึ่งของชีวิต",
-      en: "Sustained until it becomes part of daily life.",
+      th: "เรียนรู้และสะสมผลงานต่อเนื่อง พร้อมเข้าสู่ตลาดแรงงาน",
+      en: "Learning and building consistently — ready for the job market.",
     },
     lever: "relatedness",
+    levels: [6, 7],
   },
 ];
 

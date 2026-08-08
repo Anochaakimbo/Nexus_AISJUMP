@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Prompt } from "next/font/google";
 import { LocaleProvider } from "@/lib/i18n/LocaleProvider";
+import { SavedProvider } from "@/features/careers/SavedProvider";
 import "./globals.css";
 
 // Prompt is the only family used in NEXUS — it is the one in the design spec
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="th" className={`${prompt.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <LocaleProvider>{children}</LocaleProvider>
+        <LocaleProvider>
+          <SavedProvider>{children}</SavedProvider>
+        </LocaleProvider>
       </body>
     </html>
   );
