@@ -1,50 +1,38 @@
-import type { CareerGoal, RoadmapLevel } from "./types";
+import { skills } from "./profile";
+import type { CareerGoal, Localized, RoadmapLevel } from "./types";
 
 /** The Data Scientist track from the design — seven levels, foundations first. */
-export const roadmap: RoadmapLevel[] = [
+const track: Array<{ title: Localized; skillId?: string }> = [
+  { title: { th: "Python พื้นฐาน", en: "Python foundations" }, skillId: "python" },
   {
-    level: 1,
-    title: { th: "Python พื้นฐาน", en: "Python foundations" },
-    progress: 70,
-    status: "in-progress",
-  },
-  {
-    level: 2,
     title: { th: "สถิติและความน่าจะเป็น", en: "Statistics & Probability" },
-    progress: 55,
-    status: "in-progress",
+    skillId: "statistics",
   },
   {
-    level: 3,
     title: { th: "SQL สำหรับวิเคราะห์ข้อมูล", en: "SQL for Data Analysis" },
-    progress: 40,
-    status: "in-progress",
+    skillId: "sql",
   },
-  {
-    level: 4,
-    title: { th: "Machine Learning", en: "Machine Learning" },
-    progress: 30,
-    status: "in-progress",
-  },
-  {
-    level: 5,
-    title: { th: "Data Visualization", en: "Data Visualization" },
-    progress: 20,
-    status: "in-progress",
-  },
-  {
-    level: 6,
-    title: { th: "โปรเจกต์ & Portfolio", en: "Project & Portfolio" },
-    progress: 0,
-    status: "locked",
-  },
-  {
-    level: 7,
-    title: { th: "ฝึกงาน / เตรียมสมัครงาน", en: "Internship / Job Prep" },
-    progress: 0,
-    status: "locked",
-  },
+  { title: { th: "Machine Learning", en: "Machine Learning" }, skillId: "ml" },
+  { title: { th: "Data Visualization", en: "Data Visualization" }, skillId: "viz" },
+  { title: { th: "โปรเจกต์ & Portfolio", en: "Project & Portfolio" } },
+  { title: { th: "ฝึกงาน / เตรียมสมัครงาน", en: "Internship / Job Prep" } },
 ];
+
+/**
+ * Progress is read from the skill each level trains, so a level and its skill
+ * can never disagree. Levels without a skill (portfolio, internship) start at 0.
+ */
+export const roadmap: RoadmapLevel[] = track.map((step, index) => {
+  const progress =
+    skills.find((skill) => skill.id === step.skillId)?.level ?? 0;
+  return {
+    level: index + 1,
+    title: step.title,
+    skillId: step.skillId,
+    progress,
+    status: progress === 0 ? "locked" : progress >= 100 ? "done" : "in-progress",
+  };
+});
 
 export const careerGoals: CareerGoal[] = [
   {

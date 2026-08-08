@@ -22,7 +22,9 @@ export type RoadmapStatus = "done" | "in-progress" | "locked";
 export type RoadmapLevel = {
   level: number;
   title: Localized;
-  /** 0–100 */
+  /** The skill this level trains. Progress mirrors that skill's level. */
+  skillId?: string;
+  /** 0–100 — derived, never authored. */
   progress: number;
   status: RoadmapStatus;
 };

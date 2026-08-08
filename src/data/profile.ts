@@ -8,24 +8,28 @@ export const profile: Profile = {
   stage: "action",
 };
 
+/**
+ * The single source of truth for skill levels — the roadmap derives its
+ * progress from these, and the radar renders them in this order.
+ *
+ * Order follows the learning path (Python → … → Visualization) with English
+ * last, so the six axes read as a sequence rather than an arbitrary rotation.
+ */
 export const skills: Skill[] = [
   { id: "python", name: { th: "Python", en: "Python" }, level: 70 },
+  { id: "statistics", name: { th: "สถิติ", en: "Statistics" }, level: 45 },
   { id: "sql", name: { th: "SQL", en: "SQL" }, level: 55 },
-  {
-    id: "statistics",
-    name: { th: "สถิติ", en: "Statistics" },
-    level: 45,
-  },
   {
     id: "ml",
     name: { th: "Machine Learning", en: "Machine Learning" },
     level: 30,
   },
   {
-    id: "english",
-    name: { th: "ภาษาอังกฤษ", en: "English" },
-    level: 40,
+    id: "viz",
+    name: { th: "Data Visualization", en: "Data Visualization" },
+    level: 20,
   },
+  { id: "english", name: { th: "ภาษาอังกฤษ", en: "English" }, level: 40 },
 ];
 
 export const dailyTasks: Task[] = [

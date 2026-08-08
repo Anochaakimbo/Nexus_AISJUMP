@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card } from "@/components/ui/Card";
 import { Icon } from "@/components/ui/Icon";
-import { ProgressBar } from "@/components/ui/Progress";
+import { RadarChart } from "@/components/ui/RadarChart";
 import { StatTile } from "@/components/ui/Section";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { cn } from "@/lib/cn";
@@ -91,16 +91,15 @@ export default function PassportPage() {
         </div>
 
         {tab === "skills" && (
-          <Card className="space-y-3">
-            {skills.map((skill) => (
-              <div key={skill.id}>
-                <div className="flex items-baseline justify-between text-xs">
-                  <span className="font-medium text-ink">{l(skill.name)}</span>
-                  <span className="text-primary">{skill.level}%</span>
-                </div>
-                <ProgressBar value={skill.level} className="mt-1.5" />
-              </div>
-            ))}
+          <Card>
+            <RadarChart
+              caption={t("passport.tabSkills")}
+              axes={skills.map((skill) => ({
+                id: skill.id,
+                label: l(skill.name),
+                value: skill.level,
+              }))}
+            />
           </Card>
         )}
 
