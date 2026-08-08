@@ -8,7 +8,7 @@ export const profile: Profile = {
   year: 2,
   goal: { th: "Data Scientist", en: "Data Scientist" },
   readiness: 64,
-  stage: "action",
+  stage: "preparation",
 };
 
 /**

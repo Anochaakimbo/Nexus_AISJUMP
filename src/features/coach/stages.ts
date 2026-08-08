@@ -18,6 +18,8 @@ export type StageDefinition = {
   id: ChangeStage;
   order: number;
   name: Localized;
+  badgeTitle?: Localized;
+  subtitle?: Localized;
   quote: Localized;
   description: Localized;
   lever: "autonomy" | "competence" | "relatedness";
@@ -36,6 +38,8 @@ export const stages: StageDefinition[] = [
     id: "precontemplation",
     order: 1,
     name: { th: "ยังไม่มีเป้าหมาย", en: "No goal yet" },
+    badgeTitle: { th: "ขั้นตระหนักรู้", en: "Awareness" },
+    subtitle: { th: "Precontemplation", en: "Precontemplation" },
     quote: {
       th: "“ยังไม่คิดเรื่องอาชีพเลย”",
       en: "“I haven't thought about a career.”",
@@ -54,6 +58,8 @@ export const stages: StageDefinition[] = [
     id: "contemplation",
     order: 2,
     name: { th: "เริ่มมองหาเส้นทาง", en: "Exploring paths" },
+    badgeTitle: { th: "ขั้นค้นหาเส้นทาง", en: "Exploration" },
+    subtitle: { th: "Contemplation", en: "Contemplation" },
     quote: {
       th: "“ก็อยากเก่งขึ้นนะ แต่...”",
       en: "“I want to get better, but…”",
@@ -72,6 +78,8 @@ export const stages: StageDefinition[] = [
     id: "preparation",
     order: 3,
     name: { th: "วางแผนแล้ว", en: "Plan ready" },
+    badgeTitle: { th: "ขั้นเตรียมพร้อม", en: "Preparation" },
+    subtitle: { th: "Preparation", en: "Preparation" },
     quote: {
       th: "“เอาล่ะ! ต้องเรียนอะไรบ้าง?”",
       en: "“Right — what do I learn first?”",
@@ -90,6 +98,8 @@ export const stages: StageDefinition[] = [
     id: "action",
     order: 4,
     name: { th: "กำลังพัฒนาทักษะ", en: "Building skills" },
+    badgeTitle: { th: "ขั้นลงมือทำ", en: "Action" },
+    subtitle: { th: "Action", en: "Action" },
     quote: {
       th: "“ลุยกันเลย!”",
       en: "“Let's go!”",
@@ -105,6 +115,8 @@ export const stages: StageDefinition[] = [
     id: "maintenance",
     order: 5,
     name: { th: "ทำต่อเนื่องได้", en: "Staying on track" },
+    badgeTitle: { th: "ขั้นทำอย่างต่อเนื่อง", en: "Maintenance" },
+    subtitle: { th: "Maintenance", en: "Maintenance" },
     quote: {
       th: "“ทำจนเป็นนิสัยแล้ว!”",
       en: "“It's a habit now.”",

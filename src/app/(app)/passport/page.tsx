@@ -9,6 +9,7 @@ import { Icon } from "@/components/ui/Icon";
 import { StatTile } from "@/components/ui/Section";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { JobMatchCard } from "@/features/careers/JobMatchCard";
+import { StageLevelCard } from "@/features/coach/StageLevelCard";
 import { cn } from "@/lib/cn";
 import { profile, skills } from "@/data/profile";
 import { certificates, passportStats } from "@/data/passport";
@@ -73,6 +74,8 @@ function Passport() {
             </p>
           </div>
         </Card>
+
+        <StageLevelCard currentStageId={profile.stage} />
 
         <Card className="grid grid-cols-4 gap-2">
           <StatTile value={passportStats.skills} label={t("passport.skills")} />
