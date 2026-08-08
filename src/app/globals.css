@@ -30,6 +30,17 @@
   --color-warn: #f5a623;
   --color-danger: #e5484d;
 
+  /*
+   * Category hues for the assessment tiles. Six is deliberate: more hues than
+   * this and adjacent pairs stop being distinguishable (validated — nine failed
+   * on both CVD and normal-vision separation). Colours repeat across tiles;
+   * the label under each icon carries the identity, the hue only adds life.
+   */
+  --color-cyan: #0891b2;
+  --color-amber: #d97706;
+  --color-rose: #e11d48;
+  --color-violet: #7c4dff;
+
   /* Typography — Prompt is the only family; it carries Thai + Latin */
   --font-sans: var(--font-prompt), system-ui, sans-serif;
 

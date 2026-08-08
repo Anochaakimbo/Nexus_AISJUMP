@@ -14,10 +14,13 @@ export const navItems: NavItem[] = [
   { href: "/opportunities", icon: "opportunity", labelKey: "nav.opportunity" },
   { href: "/mentors", icon: "mentor", labelKey: "nav.mentor" },
   { href: "/passport", icon: "passport", labelKey: "nav.passport" },
-  { href: "/careers", icon: "career", labelKey: "nav.career" },
 ];
 
-/** Mobile bottom bar keeps five; the rest are reachable from the journey strip. */
+/**
+ * Mobile bottom bar keeps five. Mentor is the one left out — the dashboard
+ * surfaces it as a tile directly under the hero row. Career Matching is not a
+ * destination at all any more; it is a tab inside the profile.
+ */
 export const primaryNavItems: NavItem[] = navItems.filter((item) =>
   ["/dashboard", "/roadmap", "/learn", "/opportunities", "/passport"].includes(
     item.href,

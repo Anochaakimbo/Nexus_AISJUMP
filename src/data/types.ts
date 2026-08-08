@@ -29,6 +29,7 @@ export type RoadmapLevel = {
   status: RoadmapStatus;
 };
 
+
 export type LearningKind = "course" | "video" | "article" | "podcast";
 
 export type Course = {
@@ -99,15 +100,30 @@ export type Task = {
   done: boolean;
 };
 
+/** Category hue token — see the tile tint map in the assessment page. */
+export type TintColor =
+  | "accent"
+  | "cyan"
+  | "primary"
+  | "amber"
+  | "rose"
+  | "violet";
+
 export type CareerGoal = {
   id: string;
   title: Localized;
   summary: Localized;
-  accent: string;
+  icon: string;
+  color: TintColor;
 };
 
 export type Profile = {
-  name: string;
+  /** Short name used in greetings. */
+  name: Localized;
+  fullName: Localized;
+  major: Localized;
+  /** Year of study. */
+  year: number;
   goal: Localized;
   /** 0–100 */
   readiness: number;
@@ -118,4 +134,5 @@ export type Interest = {
   id: string;
   label: Localized;
   icon: string;
+  color: TintColor;
 };
